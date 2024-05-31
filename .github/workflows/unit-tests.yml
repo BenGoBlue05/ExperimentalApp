@@ -26,7 +26,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Start Timer
-        run: echo "::set-output start_time=$(date +%s)" >> $GITHUB_ENV
+        id: start-time
+        run: echo "::set-output name=start_time::$(date +%s)"
 
       - name: Build and Run Tests
         id: run-tests
@@ -36,15 +37,22 @@ jobs:
         id: end-and-duration
         run: |
           end_time=$(date +%s)
-          duration=$(( end_time - ${{ env.start_time }} ))
-          echo "::set-output end_time=$end_time" >> $GITHUB_ENV
-          echo "::set-output duration=$duration" >> $GITHUB_ENV
+          duration=$(( end_time - ${{ steps.start-time.outputs.start_time }} ))
+          echo "::set-output name=end_time::$end_time"
+          echo "::set-output name=duration::$duration"
 
       - name: Determine Test Status
         id: determine-status
         run: |
           if [ "${{ steps.run-tests.conclusion }}" == "success" ]; then
-            echo "::set-output status=success" >> $GITHUB_ENV
+            echo "::set-output name=status::success"
           else
-            echo "::set-output status=failure" >> $GITHUB_ENV
+            echo "::set-output name=status::failure"
           fi
+
+      - name: Print all outputs
+        run: |
+          echo "Start Time: ${{ steps.start-time.outputs.start_time }}"
+          echo "End Time: ${{ steps.end-and-duration.outputs.end_time }}"
+          echo "Duration: ${{ steps.end-and-duration.outputs.duration }}"
+          echo "Status: ${{ steps.determine-status.outputs.status }}"
