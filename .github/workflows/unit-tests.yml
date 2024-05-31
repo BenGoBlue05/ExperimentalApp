@@ -50,6 +50,7 @@ jobs:
           fi
 
       - name: Print outputs
+        if: always()
         run: |
-          echo "Duration: ${{ env.duration }}"
+          echo "Duration: ${{ env.duration }} seconds"
           echo "Status: ${{ env.status }}"
