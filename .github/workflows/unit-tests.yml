@@ -51,5 +51,5 @@ jobs:
 
       - name: Print outputs
         run: |
-          echo "Duration: ${{ steps.end-and-duration.outputs.duration }}"
-          echo "Status: ${{ steps.determine-status.outputs.status }}"
+          echo "Duration: ${{ env.duration }}"
+          echo "Status: ${{ env.status }}"
