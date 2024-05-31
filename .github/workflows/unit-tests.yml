@@ -24,5 +24,26 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      - name: Start Timer
+        run: echo "start_time=$(date +%s)" >> $GITHUB_ENV
+
       - name: Build and Run Tests
+        id: run-tests
         run: ./gradlew test
+
+      - name: Record End Time and Calculate Duration
+        id: end-and-duration
+        run: |
+          end_time=$(date +%s)
+          duration=$(( end_time - ${{ env.start_time }} ))
+          echo "end_time=$end_time" >> $GITHUB_ENV
+          echo "duration=$duration" >> $GITHUB_ENV
+
+      - name: Determine Test Status
+        id: determine-status
+        run: |
+          if [ "${{ steps.run-tests.conclusion }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_ENV
+          else
+            echo "status=failure" >> $GITHUB_ENV
+          fi
