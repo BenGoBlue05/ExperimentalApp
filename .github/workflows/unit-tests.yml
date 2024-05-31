@@ -35,6 +35,7 @@ jobs:
 
       - name: Record End Time and Calculate Duration
         id: end-and-duration
+        if: always()
         run: |
           end_time=$(date +%s)
           duration=$(( end_time - ${{ env.start_time }} ))
@@ -42,6 +43,7 @@ jobs:
 
       - name: Determine Test Status
         id: determine-status
+        if: always()
         run: |
           if [ "${{ steps.run-tests.conclusion }}" == "success" ]; then
             echo "status=success" >> $GITHUB_ENV
