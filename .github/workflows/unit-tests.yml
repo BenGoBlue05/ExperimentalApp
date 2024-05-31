@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Say Hello
-        run: echo "Hello, World!"
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -28,7 +26,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Start Timer
-        run: echo "start_time=$(date +%s)" >> $GITHUB_ENV
+        run: echo "::set-output start_time=$(date +%s)" >> $GITHUB_ENV
 
       - name: Build and Run Tests
         id: run-tests
@@ -39,14 +37,14 @@ jobs:
         run: |
           end_time=$(date +%s)
           duration=$(( end_time - ${{ env.start_time }} ))
-          echo "end_time=$end_time" >> $GITHUB_ENV
-          echo "duration=$duration" >> $GITHUB_ENV
+          echo "::set-output end_time=$end_time" >> $GITHUB_ENV
+          echo "::set-output duration=$duration" >> $GITHUB_ENV
 
       - name: Determine Test Status
         id: determine-status
         run: |
           if [ "${{ steps.run-tests.conclusion }}" == "success" ]; then
-            echo "status=success" >> $GITHUB_ENV
+            echo "::set-output status=success" >> $GITHUB_ENV
           else
-            echo "status=failure" >> $GITHUB_ENV
+            echo "::set-output status=failure" >> $GITHUB_ENV
           fi
