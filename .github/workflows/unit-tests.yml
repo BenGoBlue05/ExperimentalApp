@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Say Hello
+        run: echo "Hello, World!"
+
       - name: Check out code
         uses: actions/checkout@v2
 
