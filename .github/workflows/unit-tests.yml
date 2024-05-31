@@ -27,7 +27,7 @@ jobs:
 
       - name: Start Timer
         id: start-time
-        run: echo "::set-output name=start_time::$(date +%s)"
+        run: echo "start_time=$(date +%s)" >> $GITHUB_ENV
 
       - name: Build and Run Tests
         id: run-tests
@@ -37,22 +37,19 @@ jobs:
         id: end-and-duration
         run: |
           end_time=$(date +%s)
-          duration=$(( end_time - ${{ steps.start-time.outputs.start_time }} ))
-          echo "::set-output name=end_time::$end_time"
-          echo "::set-output name=duration::$duration"
+          duration=$(( end_time - ${{ env.start_time }} ))
+          echo "duration=$duration" >> $GITHUB_ENV
 
       - name: Determine Test Status
         id: determine-status
         run: |
           if [ "${{ steps.run-tests.conclusion }}" == "success" ]; then
-            echo "::set-output name=status::success"
+            echo "status=success" >> $GITHUB_ENV
           else
-            echo "::set-output name=status::failure"
+            echo "status=failure" >> $GITHUB_ENV
           fi
 
-      - name: Print all outputs
+      - name: Print outputs
         run: |
-          echo "Start Time: ${{ steps.start-time.outputs.start_time }}"
-          echo "End Time: ${{ steps.end-and-duration.outputs.end_time }}"
           echo "Duration: ${{ steps.end-and-duration.outputs.duration }}"
           echo "Status: ${{ steps.determine-status.outputs.status }}"
